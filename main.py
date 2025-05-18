@@ -22,7 +22,7 @@ def get_news():
     news = db_sess.query(Jobs).all()
     return jsonify(
         {
-            'news':
+            'jobs':
                 [item.to_dict(only=('id',
                                     'team_leader',
                                     'job', 'work_size', 'collaborators', 'start_date', 'end_date', 'is_finished'))
@@ -33,11 +33,20 @@ def get_news():
 
 @blueprint.route('/api/job/<int:job_id>', methods=['GET'])
 def get_new(job_id):
+    print(type(job_id))
+    if type(job_id) != int:
+        return make_response(jsonify({'error': 'Bad request'}), 400)
     db_sess = db_session.create_session()
+    news = db_sess.query(Jobs).all()
+    flag = []
+    for r in news:
+        flag.append(r.id)
+    if job_id not in flag:
+        return make_response(jsonify({'error': 'Bad request'}), 400)
     news = db_sess.query(Jobs).get(job_id)
     return jsonify(
         {
-            'news':
+            'jobs':
                 [news.to_dict(only=('id',
                                     'team_leader',
                                     'job', 'work_size', 'collaborators', 'start_date', 'end_date', 'is_finished'))]
@@ -55,23 +64,27 @@ def create_news():
     db_sess = db_session.create_session()
     news = Jobs(
         id=request.json['id'],
-        leader_id=request.json['leader_id'],
+        team_leader=request.json['team_leader'],
         job=request.json['job'],
         work_size=request.json['work_size'],
         collaborators=request.json['collaborators'],
-        is_finished=request.json['is_finished']
+        is_finished=request.json['is_finished'],
+        start_date=request.json['start_date'],
+        end_date=request.json['end_date']
     )
     db_sess.add(news)
     db_sess.commit()
     return jsonify({'id': news.id})
 
 
-@blueprint.route('/api/jobs/delete/<int:jobs_id>', methods=['DELETE'])
+@blueprint.route('/api/jobs/del/<int:jobs_id>', methods=['DELETE'])
 def delete_news(jobs_id):
+    if not jobs_id:
+        return make_response(jsonify({'error': 'Empty request'}), 400)
     db_sess = db_session.create_session()
     news = db_sess.query(Jobs).get(jobs_id)
     if not news:
-        return make_response(jsonify({'error': 'Not found'}), 404)
+        return make_response(jsonify({'error': 'Bad request'}), 404)
     db_sess.delete(news)
     db_sess.commit()
     return jsonify({'success': 'OK'})
@@ -91,7 +104,7 @@ def main():
     db_session.global_init("db/db.db")
     app.register_blueprint(blueprint)
     app.run()
-    app.run(port=5000, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':

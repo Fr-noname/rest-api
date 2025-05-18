@@ -14,6 +14,9 @@ class Jobs(SqlAlchemyBase, UserMixin, SerializerMixin):
     job = Column(String, nullable=False)
     work_size = Column(Integer, nullable=False)
     collaborators = Column(String, nullable=True)
-    start_date = Column(DateTime, default=datetime.utcnow, nullable=False)
-    end_date = Column(DateTime, nullable=True)
+    start_date = Column(String, default=datetime.utcnow, nullable=False)
+    end_date = Column(String, nullable=True)
     is_finished = Column(Boolean, default=False)
+
+    def __repr__(self):
+        return f'<Job> {self.job}'

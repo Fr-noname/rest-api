@@ -19,3 +19,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     email = sa.Column(sa.String, nullable=True, unique=True, index=True)
     hashed_password = sa.Column(sa.String, nullable=True)
     modified_date = sa.Column(sa.DateTime, default=datetime.now())
+
+    def __repr__(self):
+        return f'<User> {self.id} {self.surname} {self.name}'
