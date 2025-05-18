@@ -42,6 +42,26 @@ def main():
     print(delete('http://localhost:5000/api/jobs/del/1').json())
     print(get('http://127.0.0.1:5000/api/jobs').json())  # все работы после удаления работы с id 1
 
+    print('радакция работ')
+
+    print(post('http://127.0.0.1:5000/api/jobs/red', json={}).json())  # ошибка Empty request
+    print(post('http://127.0.0.1:5000/api/jobs/red',
+               json={'id': 2,
+                     'start_date': '1-05-17 00:00:00',
+                     'end_date': '1000000000-05-19 00:00:00',
+                     'is_finished': True}).json())  # ошибка Bad request, недостаточно данных
+    print(post('http://127.0.0.1:5000/api/jobs/red',
+               json={'id': 2,
+                     'team_leader': 1,
+                     'job': 'ывфв',
+                     'work_size': 24,
+                     'collaborators': '1',
+                     'start_date': '1-05-17 00:00:00',
+                     'end_date': '1000000000-05-19 00:00:00',
+                     'is_finished': True}).json())  # Редактируем вторую новость.
+    print(post('http://127.0.0.1:5000/api/jobs/red',
+               json={'title': 'Заголовок'}).json())  # ошибка Bad request, левые данные
+
     print('вернём сё на круги своя')
 
     print(post('http://127.0.0.1:5000/api/jobs/post',

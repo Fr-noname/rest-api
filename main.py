@@ -90,6 +90,37 @@ def delete_news(jobs_id):
     return jsonify({'success': 'OK'})
 
 
+@blueprint.route('/api/jobs/red', methods=['POST', 'DELETE'])
+def redact_news():
+    if not request.json:
+        return make_response(jsonify({'error': 'Empty request'}), 400)
+    elif not all(key in request.json for key in
+                 ['id', 'team_leader', 'job', 'work_size', 'collaborators', 'start_date', 'end_date', 'is_finished']):
+        return make_response(jsonify({'error': 'Bad request'}), 400)
+    if not request.json['id']:
+        return make_response(jsonify({'error': 'Empty request'}), 400)
+    db_sess = db_session.create_session()
+    news = db_sess.query(Jobs).get(request.json['id'])
+    if not news:
+        return make_response(jsonify({'error': 'Bad request'}), 404)
+    db_sess.delete(news)
+    db_sess.commit()
+    db_sess = db_session.create_session()
+    news = Jobs(
+        id=request.json['id'],
+        team_leader=request.json['team_leader'],
+        job=request.json['job'],
+        work_size=request.json['work_size'],
+        collaborators=request.json['collaborators'],
+        is_finished=request.json['is_finished'],
+        start_date=request.json['start_date'],
+        end_date=request.json['end_date']
+    )
+    db_sess.add(news)
+    db_sess.commit()
+    return jsonify({'id': news.id})
+
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
