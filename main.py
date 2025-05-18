@@ -1,10 +1,9 @@
 import flask
 from flask import Flask, jsonify, make_response, request
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import Api
 
 from data import db_session
 from data.jobs import Jobs
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -28,7 +27,7 @@ def get_news():
                                     'job', 'work_size', 'collaborators', 'start_date', 'end_date', 'is_finished'))
                  for item in news]
         }
-                   )
+    )
 
 
 @blueprint.route('/api/job/<int:job_id>', methods=['GET'])
@@ -51,7 +50,7 @@ def get_new(job_id):
                                     'team_leader',
                                     'job', 'work_size', 'collaborators', 'start_date', 'end_date', 'is_finished'))]
         }
-                   )
+    )
 
 
 @blueprint.route('/api/jobs/post', methods=['POST'])
