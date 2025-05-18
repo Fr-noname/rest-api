@@ -90,7 +90,7 @@ def delete_news(jobs_id):
     return jsonify({'success': 'OK'})
 
 
-@blueprint.route('/api/jobs/red', methods=['POST', 'DELETE'])
+@blueprint.route('/api/jobs/red', methods=['POST'])
 def redact_news():
     if not request.json:
         return make_response(jsonify({'error': 'Empty request'}), 400)
